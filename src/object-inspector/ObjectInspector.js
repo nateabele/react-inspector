@@ -93,12 +93,17 @@ class ObjectInspector extends Component {
   static defaultProps = {
     showNonenumerable: false,
 
+    mapper: null,
+
     theme: 'chromeLight',
   };
 
   static propTypes = {
+    mapper: PropTypes.func,
+
     /** An integer specifying to which level the tree should be initially expanded. */
     expandLevel: PropTypes.number,
+
     /** An array containing all the paths that should be expanded when the component is initialized, or a string of just one path */
     expandPaths: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
 
@@ -111,10 +116,11 @@ class ObjectInspector extends Component {
 
     /** Show non-enumerable properties */
     showNonenumerable: PropTypes.bool,
+
     /** Sort object keys with optional compare function. */
     sortObjectKeys: PropTypes.oneOfType([PropTypes.bool, PropTypes.func]),
 
-    /** Provide a custom nodeRenderer */
+     /** Provide a custom nodeRenderer */
     nodeRenderer: PropTypes.func,
   };
 
@@ -122,11 +128,9 @@ class ObjectInspector extends Component {
     const { showNonenumerable, sortObjectKeys, nodeRenderer, ...rest } = this.props;
     const dataIterator = createIterator(showNonenumerable, sortObjectKeys);
 
-    const renderer = nodeRenderer ? nodeRenderer : defaultNodeRenderer;
-
     return (
       <ThemeProvider theme={this.props.theme}>
-        <TreeView nodeRenderer={renderer} dataIterator={dataIterator} {...rest} />
+        <TreeView nodeRenderer={nodeRenderer || defaultNodeRenderer} {...{ dataIterator }} {...rest} />
       </ThemeProvider>
     );
   }

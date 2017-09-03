@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 
 import createStyles from '../styles/createStyles';
 
-const Arrow = ({ expanded, styles }) =>
-  <span style={{ ...styles.base, ...(expanded ? styles.expanded : styles.collapsed) }}>▶</span>;
+const Arrow = ({ expanded, styles }) => (
+  <span style={{ ...styles.base, ...(expanded ? styles.expanded : styles.collapsed) }}>▶</span>
+);
 
 class TreeNode extends Component {
+
   render() {
     const {
+      mapper,
       expanded,
       onClick,
       children,
@@ -16,17 +19,16 @@ class TreeNode extends Component {
       title,
       shouldShowArrow,
       shouldShowPlaceholder,
+      data
     } = this.props;
 
-    const { theme } = this.context;
-    const styles = createStyles('TreeNode', theme);
-
+    const styles = createStyles('TreeNode', this.context.theme);
     const renderedNode = createElement(nodeRenderer, this.props);
     const childNodes = expanded ? children : undefined;
 
-    return (
-      <li aria-expanded={expanded} role="treeitem" style={styles.treeNodeBase} title={title}>
-        <div style={styles.treeNodePreviewContainer} onClick={onClick}>
+    const defaultMapper = ({ Arrow, expanded, styles, onClick, shouldShowArrow, children, renderedNode, childNodes }) => (
+      <div>
+        <div style={styles.treeNodePreviewContainer} onClick={onClick} className="object-key">
           {shouldShowArrow || Children.count(children) > 0
             ? <Arrow expanded={expanded} styles={styles.treeNodeArrow} />
             : shouldShowPlaceholder && <span style={styles.treeNodePlaceholder}>&nbsp;</span>}
@@ -36,6 +38,14 @@ class TreeNode extends Component {
         <ol role="group" style={styles.treeNodeChildNodesContainer}>
           {childNodes}
         </ol>
+      </div>
+    );
+
+    return (
+      <li aria-expanded={expanded} role="treeitem" style={styles.treeNodeBase} title={title}>
+        {(mapper || defaultMapper)({
+          Arrow, expanded, styles, onClick, shouldShowArrow, children, renderedNode, childNodes, data, shouldShowPlaceholder
+        })}
       </li>
     );
   }
@@ -57,6 +67,7 @@ TreeNode.propTypes = {
 TreeNode.defaultProps = {
   name: undefined,
   data: undefined,
+  mapper:  null,
   expanded: true,
 
   nodeRenderer: ({ name }) =>

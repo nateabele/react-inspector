@@ -22,9 +22,9 @@ const reducer = (state, action) => {
 };
 
 class ConnectedTreeNode extends Component {
+
   constructor(props, context) {
     super(props);
-
     this.state = context.store.storeState;
   }
 
@@ -45,26 +45,14 @@ class ConnectedTreeNode extends Component {
   }
 
   renderChildNodes(parentData, parentPath) {
-    const { dataIterator } = this.props;
-    const { depth } = this.props;
-
-    const { nodeRenderer } = this.props;
-
+    const { dataIterator, depth, nodeRenderer, mapper } = this.props;
     let childNodes = [];
+
     for (let { name, data, ...props } of dataIterator(parentData)) {
       const key = name;
       const path = `${parentPath}.${key}`;
       childNodes.push(
-        <ConnectedTreeNode
-          name={name}
-          data={data}
-          depth={depth + 1}
-          path={path}
-          key={key}
-          dataIterator={dataIterator}
-          nodeRenderer={nodeRenderer}
-          {...props} // props for nodeRenderer
-        />,
+        <ConnectedTreeNode depth={depth + 1} { ...{ name, data, path, key, mapper, dataIterator, nodeRenderer, ...props } } />,
       );
     }
     return childNodes;
@@ -114,6 +102,7 @@ ConnectedTreeNode.contextTypes = {
 };
 
 class TreeView extends Component {
+
   static defaultProps = {
     expandLevel: 0,
     expandPaths: [],
@@ -159,20 +148,8 @@ class TreeView extends Component {
   };
 
   render() {
-    const { name, data, dataIterator } = this.props;
-    const { nodeRenderer } = this.props;
-
-    const rootPath = DEFAULT_ROOT_PATH;
-
     return (
-      <ConnectedTreeNode
-        name={name}
-        data={data}
-        dataIterator={dataIterator}
-        depth={0}
-        path={rootPath}
-        nodeRenderer={nodeRenderer}
-      />
+      <ConnectedTreeNode depth={0} path={DEFAULT_ROOT_PATH} { ...this.props } />
     );
   }
 }
@@ -183,6 +160,7 @@ TreeView.propTypes = {
   dataIterator: PropTypes.func,
 
   nodeRenderer: PropTypes.func,
+  mapper: PropTypes.func,
 };
 
 TreeView.defaultProps = {

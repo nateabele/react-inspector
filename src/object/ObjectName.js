@@ -20,7 +20,7 @@ const ObjectName = ({ name, dimmed, styles }, { theme }) => {
   };
 
   return (
-    <span style={appliedStyles}>
+    <span className='object-name' style={appliedStyles}>
       {name}
     </span>
   );
