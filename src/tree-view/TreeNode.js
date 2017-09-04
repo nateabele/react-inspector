@@ -11,6 +11,7 @@ class TreeNode extends Component {
 
   render() {
     const {
+      name,
       mapper,
       expanded,
       onClick,
@@ -44,7 +45,7 @@ class TreeNode extends Component {
     return (
       <li aria-expanded={expanded} role="treeitem" style={styles.treeNodeBase} title={title}>
         {(mapper || defaultMapper)({
-          Arrow, expanded, styles, onClick, shouldShowArrow, children, renderedNode, childNodes, data, shouldShowPlaceholder
+          Arrow, expanded, styles, onClick, shouldShowArrow, children, renderedNode, childNodes, data, shouldShowPlaceholder, name
         })}
       </li>
     );

@@ -37,6 +37,7 @@ const ObjectValue = ({ object, styles }, { theme }) => {
       if (object === null) {
         return <span className='value-null' style={mkStyle('objectValueNull')}>null</span>;
       }
+
       if (object instanceof Date) {
         return (
           <span className='value-object value-date'>
@@ -44,6 +45,7 @@ const ObjectValue = ({ object, styles }, { theme }) => {
           </span>
         );
       }
+
       if (object instanceof RegExp) {
         return (
           <span className='value-object value-regex' style={mkStyle('objectValueRegExp')}>
@@ -51,13 +53,21 @@ const ObjectValue = ({ object, styles }, { theme }) => {
           </span>
         );
       }
+
       if (Array.isArray(object)) {
-        return <span className='value-object value-array'>{`Array[${object.length}]`}</span>;
+        return (
+          <span className='value-object value-array'>
+            {object.length === 0 ? '[]' : `Array[${object.length}]`}
+          </span>
+        );
       }
+
+      if (object.constructor === Object && Object.keys(object).length === 0) {
+        return <span className='value-object value-object-empty'>{`{}`}</span>
+      }
+
       return (
-        <span>
-          {object.constructor.name}
-        </span>
+        <span>{object.constructor.name}</span>
       );
     case 'function':
       return (
